@@ -29,25 +29,24 @@ UF<- c("Acre", "Alagoas", "Amapa", "Amazonas", "Bahia",
 
 
 ui <- fluidPage(
+    
+    sidebarLayout(
+        
+    sidebarPanel(fluidRow(column(12, wellPanel(
+        numericInput('investimento',"Investimento em reais (R$)",value=NULL,min=1),
+        selectInput("setor_produtivo","Setor Produtivo", 
+                    choices = setor_produtivo,selected = NULL),
+        selectInput("UF","Estado", 
+                    choices = UF,selected = NULL),
+       
+         selectInput("mun","Município", 
+                    choices = c("Brasília"),selected = NULL)))),),
+    mainPanel(
+    
+    titlePanel("Trabalho Topicos "),
     navbarPage("Emprego e Renda", position = 'static-top'),
     theme=shinythemes::shinytheme('cosmo'),
     fixedRow(
-        column(2, 
-            fluidRow(column(12, wellPanel(
-                        numericInput('investimento',"Investimento em reais (R$)",value=NULL,min=1),
-                        selectInput("setor_produtivo","Setor Produtivo", 
-                                    choices = setor_produtivo,selected = NULL),
-                        selectInput("UF","Estado", 
-                                    choices = UF,selected = NULL),
-                        selectInput("mun","Município", 
-                                    choices = c("Brasília"),selected = NULL)))),
-            fluidRow(column(12, wellPanel( 
-                        selectInput("setor_produtivo","Setor Produtivo", 
-                                    choices = setor_produtivo,selected = NULL),
-                        selectInput("UF","UF", 
-                                    choices = UF,selected = NULL),
-                        selectInput("mun","Município", 
-                                    choices = c("Brasília"),selected = NULL))))),
         column(6, 
             fluidRow(column(12, wellPanel(
                 leafletOutput("map",height = 600)))),
@@ -64,7 +63,7 @@ ui <- fluidPage(
                )
         )
     )
-)
+)))
 
 server <- function(input, output,session) {
 
@@ -77,7 +76,7 @@ server <- function(input, output,session) {
             ) %>%
             setView(lng = -52.4704, lat = -12.3829, zoom = 4)
     })
-    
+    UF<-reactive(imput$UF)
     name <- c("Brasil","Argentina","Venezuela","Alemanha","Inglaterra","China","Japão","Australia","Russia","Canada")
     posi <- c(1,2,3,4,5,6,7,8,9,10)
     tab <- data.frame(name,posi)
