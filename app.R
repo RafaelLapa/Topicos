@@ -152,3 +152,5 @@ shinyApp(ui = ui, server = server)
 
 
 ####### teste
+
+#### streaming
