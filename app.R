@@ -14,11 +14,34 @@ base1 <- read.xlsx("BASES-EMPREGO-E-RENDA.xlsx",sheet=6)
 # Base 2: RAIS compilada IBGE
 base2 <- read.xlsx("BASES-EMPREGO-E-RENDA.xlsx",sheet=7)
 
+base2$codmun<-substring(base2$`Municipio/Setores`, 1, 6)
+base2$uf<-substring(base2$`Municipio/Setores`, 8, 9)
+base2<- base2 %>%  mutate(estado=case_when(uf=="AC"~"Acre", uf=="AL"~"Alagoas",
+                                           uf=="AP"~"Amapa",                                            
+                                           uf=="BA"~"Bahia", uf=="AM"~"Amazonas",
+                                           uf=="DF"~"Distrito Federal ", uf=="CE"~"Ceara",
+                                           uf=="ES"~"Espirito Santo ", uf=="GO"~"Goias ",
+                                           uf=="MA"~"Maranhao", uf=="MT"~"Mato Grosso",
+                                           uf=="MS"~"Mato Grosso do Sul", uf=="MG"~"Minas Gerais",
+                                           uf=="PA"~"Para", uf=="PB"~"Paraiba",
+                                           uf=="PR"~"Parana",
+                                           uf=="PE"~"Pernambuco", uf=="PI"~"Piaui",
+                                           uf=="RJ"~"Rio de Janeiro", uf=="RN"~"Rio Grande do Norte",
+                                           uf=="RS"~"Rio Grande do Sul", uf=="RO"~"Rondonia",
+                                           uf=="RR"~"Roraima", uf=="SC"~"Santa Catarina",
+                                           uf=="SP"~"S�o Paulo", uf=="SE"~"Sergipe",
+                                           uf=="TO"~"Tocantins ",
+))
+
+
+
+
 # Base 3: Distancias entre municipios
 base3 <- read.xlsx("BASES-EMPREGO-E-RENDA.xlsx",sheet=8)
 
-
 setor_produtivo <- base1$Setores
+
+
 UF<- c("Acre", "Alagoas", "Amapa", "Amazonas", "Bahia", 
        "Ceara", "Distrito Federal", "Espirito Santo", "Goias", "Maranhao", 
        "Mato Grosso", "Mato Grosso do Sul", "Minas Gerais", "Para", "Paraiba", 
@@ -36,11 +59,11 @@ ui <- fluidPage(
         numericInput('investimento',"Investimento em reais (R$)",value=NULL,min=1),
         selectInput("setor_produtivo","Setor Produtivo", 
                     choices = setor_produtivo,selected = NULL),
-        selectInput("UF","Estado", 
+        selectInput(inputId = "UF",label = "Estado", 
                     choices = UF,selected = NULL),
        
-         selectInput("mun","Município", 
-                    choices = c("Brasília"),selected = NULL)))),),
+         selectInput(inputId ="mun",label = "Municipio", 
+                    choices = muni,selected = NULL)))),),
     mainPanel(
     
     titlePanel("Trabalho Topicos "),
@@ -76,8 +99,17 @@ server <- function(input, output,session) {
             ) %>%
             setView(lng = -52.4704, lat = -12.3829, zoom = 4)
     })
-    UF<-reactive(imput$UF)
-    name <- c("Brasil","Argentina","Venezuela","Alemanha","Inglaterra","China","Japão","Australia","Russia","Canada")
+    
+    
+    ###########tentando reactive
+    uf<-reactive(imput$UF)
+ 
+    muni<-reactive(ifelse(uf=="RO",mun(110001:110180), ifelse(uf=="AC",mun(120001:120080), )))
+    
+    
+        
+        
+        name <- c("Brasil","Argentina","Venezuela","Alemanha","Inglaterra","China","Japão","Australia","Russia","Canada")
     posi <- c(1,2,3,4,5,6,7,8,9,10)
     tab <- data.frame(name,posi)
     output$tabela <- renderTable({
