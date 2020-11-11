@@ -62,8 +62,9 @@ ui <- fluidPage(
         selectInput(inputId = "UF",label = "Estado", 
                     choices = UF,selected = NULL),
        
-         selectInput(inputId ="mun",label = "Municipio", 
-                    choices = muni,selected = NULL)))),),
+        selectInput(inputId ="mun",label = "Municipio", 
+                    choices = base2$codmun,selected = NULL)))),),
+    
     mainPanel(
     
     titlePanel("Trabalho Topicos "),
@@ -102,13 +103,11 @@ server <- function(input, output,session) {
     
     
     ###########tentando reactive
-    uf<-reactive(imput$UF)
+    UF = reactive(input$UF)
+    mun<-reactive(ifelse(UF()=="RO",base2$mun(110001:110180), ifelse(UF()=="AC",base2$mun(120001:120080), )))
  
-    muni<-reactive(ifelse(uf=="RO",mun(110001:110180), ifelse(uf=="AC",mun(120001:120080), )))
-    
-    
         
-        
+    
         name <- c("Brasil","Argentina","Venezuela","Alemanha","Inglaterra","China","Japão","Australia","Russia","Canada")
     posi <- c(1,2,3,4,5,6,7,8,9,10)
     tab <- data.frame(name,posi)
