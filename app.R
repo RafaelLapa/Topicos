@@ -16,7 +16,8 @@ base2 <- read.xlsx("BASES-EMPREGO-E-RENDA.xlsx",sheet=7)
 
 base2$codmun<-substring(base2$`Municipio/Setores`, 1, 6)
 base2$uf<-substring(base2$`Municipio/Setores`, 8, 9)
-base2<- base2 %>%  mutate(estado=case_when(uf=="AC"~"Acre", uf=="AL"~"Alagoas",
+base2$NomeMun<-substring(base2$`Municipio/Setores`, 11, )
+aabase2<- base2 %>%  mutate(estado=case_when(uf=="AC"~"Acre", uf=="AL"~"Alagoas",
                                            uf=="AP"~"Amapa",                                            
                                            uf=="BA"~"Bahia", uf=="AM"~"Amazonas",
                                            uf=="DF"~"Distrito Federal ", uf=="CE"~"Ceara",
@@ -56,7 +57,7 @@ ui <- fluidPage(
        
         
         selectInput(inputId ="mun",label = "Municipio", 
-                    choices = codmun)))),),
+                    choices = NULL)))),),
     
     mainPanel(
     
@@ -91,7 +92,7 @@ server <- function(input, output,session) {
     }) 
         
     observeEvent(UF(), {
-        choices <- unique(UF()$codmun)
+        choices <- unique(UF()$NomeMun)
         updateSelectInput(session, "mun", choices = choices) 
     })
     
