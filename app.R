@@ -41,29 +41,22 @@ base3 <- read.xlsx("BASES-EMPREGO-E-RENDA.xlsx",sheet=8)
 
 setor_produtivo <- base1$Setores
 
-
-UF<- c("Acre", "Alagoas", "Amapa", "Amazonas", "Bahia", 
-       "Ceara", "Distrito Federal", "Espirito Santo", "Goias", "Maranhao", 
-       "Mato Grosso", "Mato Grosso do Sul", "Minas Gerais", "Para", "Paraiba", 
-       "Parana", "Pernambuco", "Piaui", "Rio de Janeiro", "Rio Grande do Norte", 
-       "Rio Grande do Sul", "Rondonia", "Roraima", "Santa Catarina", "Sao Paulo", 
-       "Sergipe", "Tocantins")
-
-
-
 ui <- fluidPage(
     
     sidebarLayout(
         
     sidebarPanel(fluidRow(column(12, wellPanel(
-        numericInput('investimento',"Investimento em reais (R$)",value=NULL,min=1),
-        selectInput("setor_produtivo","Setor Produtivo", 
+        numericInput(inputId = 'investimento',label ="Investimento em reais (R$)",value=NULL,min=1),
+        
+        selectInput(inputId = "setor_produtivo",label ="Setor Produtivo", 
                     choices = setor_produtivo,selected = NULL),
+        
         selectInput(inputId = "UF",label = "Estado", 
-                    choices = UF,selected = NULL),
+                    choices = unique(base2$uf),selected = NULL),
        
+        
         selectInput(inputId ="mun",label = "Municipio", 
-                    choices = base2$codmun,selected = NULL)))),),
+                    choices = codmun)))),),
     
     mainPanel(
     
@@ -92,6 +85,18 @@ ui <- fluidPage(
 server <- function(input, output,session) {
 
     
+    ###########tentando reactive
+    UF = reactive({
+        filter(base2, uf == input$UF)
+    }) 
+        
+    observeEvent(UF(), {
+        choices <- unique(UF()$codmun)
+        updateSelectInput(session, "mun", choices = choices) 
+    })
+    
+    
+    
     output$map <- renderLeaflet({
         leaflet() %>%
             addTiles(
@@ -102,11 +107,7 @@ server <- function(input, output,session) {
     })
     
     
-    ###########tentando reactive
-    UF = reactive(input$UF)
-    mun<-reactive(ifelse(UF()=="RO",base2$mun(110001:110180), ifelse(UF()=="AC",base2$mun(120001:120080), )))
- 
-        
+
     
         name <- c("Brasil","Argentina","Venezuela","Alemanha","Inglaterra","China","Japão","Australia","Russia","Canada")
     posi <- c(1,2,3,4,5,6,7,8,9,10)
