@@ -1,4 +1,4 @@
-### CÃ¡lculos para os resultados do topico Emprego e Renda ###
+### Cálculos para os resultados do topico Emprego e Renda ###
 
 install.packages("openxlsx")
 install.packages("dplyr")

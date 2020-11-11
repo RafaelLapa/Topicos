@@ -1,4 +1,4 @@
-setwd("C:/Users/carlo/Documents/Faculdade/Topicos/Shinny-Topicos/Topicos")
+setwd("C:/Documentos/Topicos")
 
 #install.packages("openxlsx")
 
@@ -10,6 +10,7 @@ library(tidyverse)
 
 # Base 1: Matriz de Leontief
 base1 <- read.xlsx("BASES-EMPREGO-E-RENDA.xlsx",sheet=6)
+base1_mat <- data.matrix(base1[,-1])
 
 # Base 2: RAIS compilada IBGE
 base2 <- read.xlsx("BASES-EMPREGO-E-RENDA.xlsx",sheet=7)
@@ -17,7 +18,7 @@ base2 <- read.xlsx("BASES-EMPREGO-E-RENDA.xlsx",sheet=7)
 base2$codmun<-substring(base2$`Municipio/Setores`, 1, 6)
 base2$uf<-substring(base2$`Municipio/Setores`, 8, 9)
 base2$NomeMun<-substring(base2$`Municipio/Setores`, 11, )
-aabase2<- base2 %>%  mutate(estado=case_when(uf=="AC"~"Acre", uf=="AL"~"Alagoas",
+base2<- base2 %>%  mutate(estado=case_when(uf=="AC"~"Acre", uf=="AL"~"Alagoas",
                                            uf=="AP"~"Amapa",                                            
                                            uf=="BA"~"Bahia", uf=="AM"~"Amazonas",
                                            uf=="DF"~"Distrito Federal ", uf=="CE"~"Ceara",
@@ -40,7 +41,6 @@ aabase2<- base2 %>%  mutate(estado=case_when(uf=="AC"~"Acre", uf=="AL"~"Alagoas"
 # Base 3: Distancias entre municipios
 base3 <- read.xlsx("BASES-EMPREGO-E-RENDA.xlsx",sheet=8)
 
-setor_produtivo <- base1$Setores
 
 ui <- fluidPage(
     
@@ -50,7 +50,7 @@ ui <- fluidPage(
         numericInput(inputId = 'investimento',label ="Investimento em reais (R$)",value=NULL,min=1),
         
         selectInput(inputId = "setor_produtivo",label ="Setor Produtivo", 
-                    choices = setor_produtivo,selected = NULL),
+                    choices = base1$Setores,selected = NULL),
         
         selectInput(inputId = "UF",label = "Estado", 
                     choices = unique(base2$uf),selected = NULL),
@@ -96,7 +96,15 @@ server <- function(input, output,session) {
         updateSelectInput(session, "mun", choices = choices) 
     })
     
+    Investimento = reactive({
+        input$investimento
+    }) 
     
+    SetorProdutivo = reactive({
+        filter(base1,  Setores== input$setor_produtivo)
+    }) 
+    
+    Y = matrix(c(rep.int(0,(SetorProdutivo()-1)),Investimento(),rep.int(0,(length(Setores)-SetorProdutivo()))),nrow=length(Setores))
     
     output$map <- renderLeaflet({
         leaflet() %>%
