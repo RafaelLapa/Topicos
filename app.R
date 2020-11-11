@@ -1,4 +1,4 @@
-setwd("C:/Documentos/Topicos")
+setwd("C:/Users/carlo/Documents/Faculdade/Topicos/Shinny-Topicos//Topicos")
 
 #install.packages("openxlsx")
 
@@ -86,7 +86,7 @@ ui <- fluidPage(
 server <- function(input, output,session) {
 
     
-    ###########tentando reactive
+    
     UF = reactive({
         filter(base2, uf == input$UF)
     }) 
@@ -104,7 +104,17 @@ server <- function(input, output,session) {
         filter(base1,  Setores== input$setor_produtivo)
     }) 
     
-    Y = matrix(c(rep.int(0,(SetorProdutivo()-1)),Investimento(),rep.int(0,(length(Setores)-SetorProdutivo()))),nrow=length(Setores))
+    
+    
+    vals <- reactiveVal()
+    observe(vals<-SetorProdutivo())
+    
+    
+    #################################3parte a resolver ##############################
+    
+    
+    #oberserve(vals$a <- input$investimento )
+    #Y = matrix(c(rep.int(0,(vals-1)),Investimento(),rep.int(0,(length(Setores)-vals))),nrow=length(Setores))
     
     output$map <- renderLeaflet({
         leaflet() %>%
