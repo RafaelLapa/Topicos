@@ -8,6 +8,7 @@ library(leaflet)
 library(openxlsx)
 library(tidyverse)
 
+
 # Base 1: Matriz de Leontief
 base1 <- read.xlsx("BASES-EMPREGO-E-RENDA.xlsx",sheet=6)
 base1_mat <- data.matrix(base1[,-1])
@@ -57,7 +58,8 @@ ui <- fluidPage(
        
         
         selectInput(inputId ="mun",label = "Municipio", 
-                    choices = NULL)))),),
+                    choices = NULL)))),
+        ),
     
     mainPanel(
     
@@ -67,19 +69,20 @@ ui <- fluidPage(
     fixedRow(
         column(6, 
             fluidRow(column(12, wellPanel(
-                leafletOutput("map",height = 600)))),
+                
+                leafletOutput(outputId = "map",width=854, height = 480)))),
+            
             fluidRow(column(12,wellPanel(
                 textOutput('fonte')
             )))),
-         column(4,
-             fluidRow(column(6,wellPanel(
-                            tableOutput('tabela'))),
-                      column(6,wellPanel(
-                            tableOutput('tabela2')))),
-             fluidRow(column(12, wellPanel(
-                textOutput('indicador')))
-               )
-        )
+    #    column(4,
+            # fluidRow(column(6,wellPanel(
+           #                 tableOutput('tabela'))),
+          #            column(6,wellPanel(
+         #                   tableOutput('tabela2')))),
+        #     fluidRow(column(12, wellPanel(
+                #textOutput('indicador')))
+               #))
     )
 )))
 
@@ -116,14 +119,20 @@ server <- function(input, output,session) {
     #oberserve(vals$a <- input$investimento )
     #Y = matrix(c(rep.int(0,(vals-1)),Investimento(),rep.int(0,(length(Setores)-vals))),nrow=length(Setores))
     
-    output$map <- renderLeaflet({
-        leaflet() %>%
-            addTiles(
-                urlTemplate = "//{s}.tiles.mapbox.com/v3/jcheng.map-5ebohr46/{z}/{x}/{y}.png",
-                attribution = 'Maps by <a href="http://www.mapbox.com/">Mapbox</a>'
-            ) %>%
-            setView(lng = -52.4704, lat = -12.3829, zoom = 4)
-    })
+    
+    output$map = renderLeaflet({
+        leaflet() %>% setView(lng = -53, lat = -11, zoom = 5) %>%
+            addProviderTiles(providers$OpenStreetMap) } )
+    
+    
+    #output$map <- renderLeaflet({
+       # leaflet() %>%
+         #   addTiles(
+         #       urlTemplate = "//{s}.tiles.mapbox.com/v3/jcheng.map-5ebohr46/{z}/{x}/{y}.png",
+        #        attribution = 'Maps by <a href="http://www.mapbox.com/">Mapbox</a>'
+        #    ) %>%
+    #        setView(lng = -52.4704, lat = -12.3829, zoom = 4)
+   # })
     
     
 
