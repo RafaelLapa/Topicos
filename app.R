@@ -1,4 +1,4 @@
-setwd("C:/Users/carlo/Documents/Faculdade/Topicos/Shinny-Topicos//Topicos")
+setwd("C:/Documentos/Topicos")
 
 #install.packages("openxlsx")
 
@@ -11,7 +11,8 @@ library(tidyverse)
 
 # Base 1: Matriz de Leontief
 base1 <- read.xlsx("BASES-EMPREGO-E-RENDA.xlsx",sheet=6)
-base1_mat <- data.matrix(base1[,-1])
+base1$setnum<- c(1:67)
+#base1_mat <- data.matrix(base1[,-1])
 
 # Base 2: RAIS compilada IBGE
 base2 <- read.xlsx("BASES-EMPREGO-E-RENDA.xlsx",sheet=7)
@@ -45,9 +46,10 @@ base3 <- read.xlsx("BASES-EMPREGO-E-RENDA.xlsx",sheet=8)
 
 ui <- fluidPage(
     
-    sidebarLayout(
+#    sidebarLayout(
         
-    sidebarPanel(fluidRow(column(12, wellPanel(
+#    sidebarPanel(
+        fluidRow(column(12, wellPanel(
         numericInput(inputId = 'investimento',label ="Investimento em reais (R$)",value=NULL,min=1),
         
         selectInput(inputId = "setor_produtivo",label ="Setor Produtivo", 
@@ -59,9 +61,9 @@ ui <- fluidPage(
         
         selectInput(inputId ="mun",label = "Municipio", 
                     choices = NULL)))),
-        ),
+#        ),
     
-    mainPanel(
+#    mainPanel(
     
     titlePanel("Trabalho Topicos "),
     navbarPage("Emprego e Renda", position = 'static-top'),
@@ -84,7 +86,8 @@ ui <- fluidPage(
                 #textOutput('indicador')))
                #))
     )
-)))
+)
+##))
 
 server <- function(input, output,session) {
 
@@ -104,20 +107,32 @@ server <- function(input, output,session) {
     }) 
     
     SetorProdutivo = reactive({
-        filter(base1,  Setores== input$setor_produtivo)
+        filter(base1,  Setores == input$setor_produtivo)
+#        setornum <-as.numeric(base1$setnum)
     }) 
     
     
     
-    vals <- reactiveVal()
-    observe(vals<-SetorProdutivo())
+    vals <- reactiveValues ()
     
+    observe({vals<-SetorProdutivo()
+            invest<-Investimento()
+            Setornum<-as.numeric(vals$setnum)
+            vals<- select(base1,-c(setnum,Setores))
+            valsmat<- data.matrix(vals)
+            Y <- matrix(c(rep.int(0,(Setornum-1)),invest,rep.int(0,(67-Setornum))),nrow=67)
+            X <- valsmat %*% Y 
+            delta <- X-valsmat[,Setornum]})
+    
+#    observe(vals<-SetorProdutivo())
+    
+#    valsmat<- as.matrix(vals)
     
     #################################3parte a resolver ##############################
     
     
-    #oberserve(vals$a <- input$investimento )
-    #Y = matrix(c(rep.int(0,(vals-1)),Investimento(),rep.int(0,(length(Setores)-vals))),nrow=length(Setores))
+#    observe(valsmat$a <- Investimento() )
+#     Y = matrix(c(rep.int(0,(valsmat-1)),Investimento(),rep.int(0,(length(Setores)-valsmat))),nrow=length(Setores))
     
     
     output$map = renderLeaflet({

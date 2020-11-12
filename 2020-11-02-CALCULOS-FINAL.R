@@ -27,17 +27,20 @@ base1_mat <- data.matrix(base1[,-1]) # transformando Leontief em matriz
 # Definicao dos inputs (valores de entrada)
 
 setores <- colnames(base1[-1]) # vetor com o nome dos 67 setores
+setores
 length(setores) # quantidade de setores produtivos
 setor_escolhido <- 3 # usuario pode escolher de 1 a 67
+setor_escolhido
 aumento_demanda <- 30 # numero de unidades produzidas a mais no setor escolhido
 
 # Vetor coluna: demanda final
 Y = matrix(c(rep.int(0,(setor_escolhido-1)),aumento_demanda,rep.int(0,(length(setores)-setor_escolhido))),nrow=length(setores))
-
+Y
 X = base1_mat %*% Y # calculo do vetor producao para o aumento da demanda (Y)
 
 # Impacto em todos os setores devido ao aumento da demanda final no setor escolhido
-delta <- X-base1_mat[,1] # variacao do vetor producao: final (X) menos inicial (Leontief)
+delta <- X-base1_mat[,setor_escolhido] # variacao do vetor producao: final (X) menos inicial (Leontief)
+delta
 head(delta)
 
 # Selecao do municipio
