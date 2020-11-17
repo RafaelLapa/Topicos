@@ -8,13 +8,13 @@ install.packages("stringr")
 library(openxlsx)
 
 # Base 1: Matriz de Leontief
-base1 <- read.xlsx("/Users/gilson/Documents/GILSON/UNB/1-ESTATISTICA/1-2020-TOPICOS/BASES-DE-DADOS/BASES-EMPREGO-E-RENDA.xlsx",sheet=6)
+base1 <- read.xlsx("C:/Users/usuario/Downloads/BASES-EMPREGO-E-RENDA.xlsx",sheet=6)
 
 # Base 2: RAIS compilada IBGE
-base2 <- read.xlsx("/Users/gilson/Documents/GILSON/UNB/1-ESTATISTICA/1-2020-TOPICOS/BASES-DE-DADOS/BASES-EMPREGO-E-RENDA.xlsx",sheet=7)
+base2 <- read.xlsx("C:/Users/usuario/Downloads/BASES-EMPREGO-E-RENDA.xlsx",sheet=7)
 
 # Base 3: Distancias entre municipios
-base3 <- read.xlsx("/Users/gilson/Documents/GILSON/UNB/1-ESTATISTICA/1-2020-TOPICOS/BASES-DE-DADOS/BASES-EMPREGO-E-RENDA.xlsx",sheet=8)
+base3 <- read.xlsx("C:/Users/usuario/Downloads/BASES-EMPREGO-E-RENDA.xlsx",sheet=8)
 
 # Calcular a equacao matricial: X=B*Y
 # X = vetor producao
